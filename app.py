@@ -115,7 +115,7 @@ if st.session_state.wav_path and os.path.exists(st.session_state.wav_path):
                 ),
                 transcription=text,
             )
-            create_audio(session, audio)
+            audio = create_audio(session, audio)
 
             st.success("📝 Transkrypcja zakończona pomyślnie!")
             st.text_area("📜 Transkrypcja:", value=text, height=300)
