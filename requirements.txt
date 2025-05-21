@@ -4,3 +4,7 @@ numpy>=2.2.4
 SQLAlchemy>=2.0.40
 sqlmodel>=0.0.24
 psycopg2-binary>=2.9.10
+streamlit>=1.45.1
+pytubefix>=8.13.1
+pydub>=0.25.1
+ffprobe>=0.5
