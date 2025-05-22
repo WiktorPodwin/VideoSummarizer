@@ -8,3 +8,4 @@ streamlit>=1.45.1
 pytubefix>=8.13.1
 pydub>=0.25.1
 ffprobe>=0.5
+pydantic-settings>=2.8.1
