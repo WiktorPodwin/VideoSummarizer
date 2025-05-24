@@ -9,12 +9,11 @@ from pytubefix import YouTube
 from config import BaseConfig as config
 from src.audio_transcription import AudioTranscription
 from src.utils import convert_to_wav
-from src.core import init_db, create_session
+from src.core import create_session
 from src.crud import create_audio
 from src.models import Audio
 from src.models.data_types import AudioSource
 
-init_db()
 session = create_session()
 
 SAVE_DIR = config.DATA_DIR
@@ -101,7 +100,9 @@ elif url:
 if st.session_state.wav_path and os.path.exists(st.session_state.wav_path):
     if st.button("📝 Transkrybuj ten plik audio"):
         try:
-            audio_data, sr = librosa.load(st.session_state.wav_path, sr=16000)
+            audio_data, sr = librosa.load(
+                st.session_state.wav_path, sr=16000, duration=None
+            )
             transcription_oper = AudioTranscription(TRANSCRIPTION_MODEL)
             text = transcription_oper.text_transcription(audio_data, sr)
 
