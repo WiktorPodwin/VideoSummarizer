@@ -9,3 +9,10 @@ pytubefix>=8.13.1
 pydub>=0.25.1
 ffprobe>=0.5
 pydantic-settings>=2.8.1
+langchain
+sentence_transformers
+torch
+sentencepiece
+accelerate
+tiktoken
+chromadb

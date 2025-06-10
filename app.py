@@ -1,10 +1,12 @@
 import os
 
 os.environ["STREAMLIT_SERVER_ENABLE_FILE_WATCHER"] = "false"
+os.makedirs("./offload", exist_ok=True)
 
 import librosa
 import streamlit as st
 from pytubefix import YouTube
+
 
 from config import BaseConfig as config
 from src.audio_transcription import AudioTranscription
@@ -12,7 +14,14 @@ from src.utils import convert_to_wav
 from src.core import create_session
 from src.crud import create_audio
 from src.models import Audio
+
 from src.models.data_types import AudioSource
+from src.llm_summarize import TextSummarizer
+
+
+# Konfiguracja aplikacji Streamlit
+st.set_page_config(layout="wide")
+st.title("🎧 Transkrypcja i Podsumowanie Audio")
 
 session = create_session()
 
@@ -98,13 +107,16 @@ elif url:
         st.error(f"❌ Błąd: {e}")
 
 if st.session_state.wav_path and os.path.exists(st.session_state.wav_path):
-    if st.button("📝 Transkrybuj ten plik audio"):
+    if st.button("📝 Transkrybuj i streść ten plik audio"):
         try:
             audio_data, sr = librosa.load(
                 st.session_state.wav_path, sr=16000, duration=None
             )
             transcription_oper = AudioTranscription(TRANSCRIPTION_MODEL)
             text = transcription_oper.text_transcription(audio_data, sr)
+
+            summarizer = TextSummarizer()
+            summary = summarizer.summarize(text)
 
             audio = Audio(
                 title=os.path.basename(st.session_state.wav_path).split(".")[0],
@@ -115,12 +127,20 @@ if st.session_state.wav_path and os.path.exists(st.session_state.wav_path):
                     else None
                 ),
                 transcription=text,
+                summary=summary
             )
             audio = create_audio(session, audio)
 
             st.success("📝 Transkrypcja zakończona pomyślnie!")
-            st.text_area("📜 Transkrypcja:", value=text, height=300)
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.text_area("📜 Transkrypcja:", value=text, height=400)
+
+            with col2:
+                st.text_area("📄 Podsumowanie:", value=summary, height=400)
+            st.success("📚 Podsumowanie gotowe!")
 
         except Exception as e:
-            st.error(f"❌ Błąd podczas transkrypcji: {e}")
+            st.error(f"❌ Błąd podczas transkrypcji lub podsumowania: {e}")
             print("Error:\n\n", e, "\n\n")
