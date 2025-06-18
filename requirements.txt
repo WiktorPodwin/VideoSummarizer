@@ -15,4 +15,3 @@ torch
 sentencepiece
 accelerate
 tiktoken
-chromadb

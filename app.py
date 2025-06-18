@@ -12,7 +12,7 @@ from config import BaseConfig as config
 from src.audio_transcription import AudioTranscription
 from src.utils import convert_to_wav
 from src.core import create_session
-from src.crud import create_audio
+from src.crud import create_audio, get_audio
 from src.models import Audio
 
 from src.models.data_types import AudioSource
@@ -127,18 +127,20 @@ if st.session_state.wav_path and os.path.exists(st.session_state.wav_path):
                     else None
                 ),
                 transcription=text,
-                summary=summary
+                summary=summary,
             )
             audio = create_audio(session, audio)
 
             st.success("📝 Transkrypcja zakończona pomyślnie!")
             col1, col2 = st.columns(2)
 
+            audio = get_audio(session, audio.id)
+
             with col1:
-                st.text_area("📜 Transkrypcja:", value=text, height=400)
+                st.text_area("📜 Transkrypcja:", value=audio.transcription, height=400)
 
             with col2:
-                st.text_area("📄 Podsumowanie:", value=summary, height=400)
+                st.text_area("📄 Podsumowanie:", value=audio.summary, height=400)
             st.success("📚 Podsumowanie gotowe!")
 
         except Exception as e:

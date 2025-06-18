@@ -1,6 +1,7 @@
 from transformers import T5Tokenizer, T5ForConditionalGeneration, pipeline
 import torch
 
+
 class TextSummarizer:
     """
     Class for summarizing long text using a pretrained T5-based model.
@@ -43,11 +44,13 @@ class TextSummarizer:
             str: A concatenated summary of all text chunks.
         """
         # Tokenize and split into chunks
-        input_tokens = self.tokenizer.encode(text, return_tensors="pt", truncation=False)[0]
+        input_tokens = self.tokenizer.encode(
+            text, return_tensors="pt", truncation=False
+        )[0]
         chunks = []
 
         for i in range(0, len(input_tokens), self.max_chunk_tokens):
-            chunk_tokens = input_tokens[i:i + self.max_chunk_tokens]
+            chunk_tokens = input_tokens[i : i + self.max_chunk_tokens]
             chunk_text = self.tokenizer.decode(chunk_tokens, skip_special_tokens=True)
             chunks.append(chunk_text)
 
@@ -58,6 +61,7 @@ class TextSummarizer:
             summaries.append(result[0]["summary_text"])
 
         return "\n\n".join(summaries)
+
 
 # # Funkcja do streszczenia tekstu
 # def llm_summarize_text(input_text: str):
